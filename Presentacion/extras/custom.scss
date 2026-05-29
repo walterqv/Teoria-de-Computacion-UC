@@ -1,0 +1,20 @@
+/*-- scss:defaults --*/
+
+$body-bg: #ffffff;
+$body-color: #9c07e1;
+$link-color: #000acf;
+
+/*-- scss:rules --*/
+
+.reveal .slide blockquote {
+  border-left: 3px solid $text-muted;
+  padding-left: 0.5em;
+}
+
+// Slide numbers to the bottom-left
+.slide-number, .reveal.has-logo .slide-number {
+  bottom: 14px !important;
+  right: 50px !important;
+  top: unset !important;
+  color: #000000 !important;
+}
