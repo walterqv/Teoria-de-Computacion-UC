@@ -1,0 +1,143 @@
+---
+title: "Unidad 2" 
+subtitle: TEORÍA DE LA COMPUTACIÓN
+format: 
+  revealjs:
+    transition: convex
+    preview-links: auto
+    theme: [default, extras/conti/custom.scss]
+    slide-number: true
+    logo: extras/conti/logonew.gif
+    css: extras/conti/logo.css
+    incremental: true
+    embed-resources: true
+title-slide-attributes:
+    data-background-image: "extras/conti/contidist.png"
+    data-background-size: contain
+    data-background-opacity: "0.99"
+editor: visual
+author: "Walter Quispe Vargas"
+institute: "Docente - EAP Ciencia de la Computación - Universidad Continental"
+lang: es
+code-fold: true
+engine: knitr
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE, echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+## Propósito de la Sesión {.center}
+
+-   Comprender el concepto de **autómatas finitos no deterministas**
+
+-   Conocer los Lenguajes y sus **gramaticas libres de contexto**.
+
+-  Analizar y Evaluar los **Autómatas con pila**.
+
+## Contenidos a tratar {.center}
+
+1.  Autómatas finitos no deterministas.
+2.  Lenguajes y Gramaticas libres de contexto.
+3.  Autómatas con Pila.
+
+
+##                           MOTIVACIÓN {.scrollable}
+
+- Cuando una máquina se encuentra en un estado dado y lee el siguiente símbolo de entrada, sabemos cuál será el siguiente estado; está determinado. A esto lo llamamos computación determinista. 
+
+- En una máquina no determinista, pueden existir varias opciones para el siguiente estado en cualquier momento.
+
+- [¿Cómo puede una máquina tomar múltiples caminos al mismo tiempo?]{style="color: blue;"}
+
+- [Los compiladores y expresiones regulares utilizan modelos no determinísticos.]{style="color:green;"} Son fundamentales en búsquedas de texto y validación léxica.
+
+- [Los NFAs simplifican el diseño de autómatas complejos.]{style="color:magenta;"}
+Luego pueden transformarse en DFAs equivalentes.
+
+
+
+
+##      AUTÓMATA NO DETERMINÍSTICO {.scrollable}
+
+### NFA:
+
+- Un NFA puede tener múltiples transiciones para un mismo símbolo.
+- También puede no tener transición.
+- El autómata puede “adivinar” caminos correctos.
+- Una cadena es aceptada si existe al menos un camino de aceptación.
+
+- **Definición**: $N=(Q,\Sigma,\delta,q_0,F)$
+
+    - $Q$ Conjunto finito de estados.
+    - $\Sigma$ Alfabeto de entrada.
+    - $\delta$ Función de transición no determinística.
+        
+        -  $\delta:Q\times \Sigma_{\epsilon} \longrightarrow \mathcal{P}(Q)$
+        - $\Sigma_{\epsilon}=\Sigma \cup \{\epsilon\}$
+        - $\mathcal{P}(Q)$ Conjunto Potencia de $Q$
+    
+    - $q_0$ Estado inicial.
+    - $F$ Conjunto de estados de aceptación.
+
+##      AUTÓMATA NO DETERMINÍSTICO {.scrollable}
+
+
+
+```{r, include=FALSE}
+library(reticulate)
+#py_install("automathon")
+use_virtualenv("r-reticulate", required = TRUE)
+py_config()
+```
+
+```{python}
+#| echo: true
+from automata.fa.nfa import NFA
+
+# Define the NFA from Sipser Figure 1.27 (Page 51)
+sipser_nfa = NFA(
+    states={'q1', 'q2', 'q3', 'q4'},
+    input_symbols={'0', '1'},
+    transitions={
+        'q1': {
+            '0': {'q1', 'q2'},  # Branches into q1 and q2 on '0'
+            '1': {'q1'}
+        },
+        'q2': {
+            '0': {'q3'},
+            '': {'q3'}          # Epsilon transition to q3 (represented as '')
+        },
+        'q3': {
+            '1': {'q4'}
+        },
+        'q4': {
+            '0': {'q4'},
+            '1': {'q4'}
+        }
+    },
+    initial_state='q1',
+    final_states={'q4'}
+)
+```
+
+
+
+## ¿Qué aprendimos hoy? {.center}
+
+- Autómatas finitos no deterministos.
+
+- Lenguajes y gramaticas libres de contexto.
+
+- Push-down Automata.
+
+## Referencias Bibliografícas {.center}
+
+-   Sipser, M. (2013). *Introduction to the theory of computation* (3.ª ed.). *Cengage Learning*.
+
+    - CAP. 1, pag. 47-63
+    - CAP. 2, pag. 101-129
+
+## PREGUNTAS... {.center}
+
+![](extras/conti/cierre.png)
