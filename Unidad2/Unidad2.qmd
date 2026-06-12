@@ -121,6 +121,534 @@ sipser_nfa = NFA(
 )
 ```
 
+##           Lenguajes Libres de Contexto {.scrollable}
+
+- Muchos lenguajes de programación requieren estructuras anidadas.
+- Los autómatas finitos no pueden reconocer ciertos patrones.
+- Se necesitan mecanismos más expresivos.
+- Las Gramáticas Libres de Contexto permiten describir:
+    - Expresiones aritméticas.
+    - Estructuras sintácticas.
+    - Lenguajes con balanceo de símbolos.
+
+##       GRAMÁTICA LIBRE DE CONTEXTO {.scrollable}
+
+### CFG (Context-Free Grammar)
+
+- Una CFG genera cadenas de un lenguaje.
+- Las reglas de producción sustituyen variables.
+- Cada producción tiene una sola variable en el lado izquierdo.
+- Permiten describir estructuras recursivas.
+
+- **Definición:**  $G=(V,\Sigma,R,S)$
+
+    - $V$ Conjunto finito de variables.
+    - $\Sigma$ Conjunto finito de terminales.
+    - $R$ Conjunto finito de reglas.
+    - $S$ Variable inicial.
+
+- **Variables**
+    
+    - También llamadas no terminales.
+    - Representan conjuntos de cadenas.
+    - Se escriben generalmente con letras mayúsculas.
+ 
+    - Ejemplo: $V=\{S,A,B\}$
+
+- **Terminales**
+
+    - Símbolos finales del lenguaje.
+    - No pueden reemplazarse.
+    - Ejemplo: $\Sigma=\{a,b\}$
+
+- **Producciones**
+
+    - Determinan cómo generar cadenas.
+    - Tienen la forma:
+    - Ejemplo: $A \rightarrow w$ donde:
+        
+        - $A \in V$
+        - $w \in (V \cup \Sigma)^*$
+
+- Ejemplos:
+
+    - $S \rightarrow aSb$
+    - $S \rightarrow \epsilon$
+
+
+- **EJEMPLO CLÁSICO**
+
+- Lenguaje: $L=\{a^n b^n \mid n\ge0\}$
+- Gramatica: 
+    
+    - $S\rightarrow aSb$
+    - $S\rightarrow \epsilon$
+
+- Interpretación
+
+    - Cada producción agrega un símbolo $a$.
+    - Simultáneamente agrega un símbolo $b$.
+    - Se conserva la misma cantidad de símbolos.
+
+- DERIVACIÓN
+
+- Generación de la cadena aabb
+- Partimos de: $S$
+- Aplicamos reglas: $S \Rightarrow aSb$ $\Rightarrow aaSbb$ $\Rightarrow aa\epsilon bb$ $= aabb$
+
+
+- ÁRBOL DE DERIVACIÓN 
+
+- Parse Tree
+
+```{mermaid}
+graph TD
+S
+S --> a1[a]
+S --> S1[S]
+S --> b1[b]
+
+S1 --> a2[a]
+S1 --> S2[S]
+S1 --> b2[b]
+
+S2 --> e[ε]
+```
+
+- Muestra visualmente la derivación.
+- La raíz es el símbolo inicial.
+- Las hojas forman la cadena generada.
+
+
+
+##           LENGUAJE GENERADO {.scrollable}
+
+-  **Definición** El lenguaje generado por una gramática es:
+
+- $L(G)=\{w\in \Sigma^*\mid S\Rightarrow^* w\}$, donde:
+
+    - $\Rightarrow^*$ indica cero o más derivaciones.
+    - $w$ contiene únicamente terminales.
+
+## GRAMÁTICA PARA PARÉNTESIS BALANCEADOS {.scrollable}
+
+### Ejemplo
+
+$$
+S \rightarrow SS
+$$
+
+$$
+S \rightarrow (S)
+$$
+
+$$
+S \rightarrow \epsilon
+$$
+
+Genera:
+
+- ε
+- ()
+- ()()
+- (())
+- (()())
+
+
+## APLICACIONES {.scrollable}
+
+### Uso en Computación
+
+- Compiladores.
+- Analizadores sintácticos.
+- Lenguajes de programación.
+- XML y HTML.
+- Procesamiento de lenguaje natural.
+- Diseño de intérpretes.
+
+
+##   AUTÓMATA CON PILA {.scrollable}
+
+### Motivación
+
+- Los DFA poseen memoria finita.
+- Los NFA tienen el mismo poder computacional que los DFA.
+- No pueden reconocer ciertos lenguajes.
+- Ejemplo: $L=\{a^n b^n \mid n \ge 0\}$
+
+- Requiere recordar la cantidad de símbolos $a$.
+- Se necesita memoria adicional.
+- Surge el modelo PDA.
+
+
+##             AUTÓMATA CON PILA {.scrollable}
+
+### PDA
+
+- Un PDA es un autómata finito con memoria auxiliar.
+- La memoria se organiza como una pila (Stack).
+- Puede insertar símbolos.
+- Puede eliminar símbolos.
+- Puede consultar únicamente el tope de la pila.
+
+- **Definición:** $P=(Q,\Sigma,\Gamma,\delta,q_0,F)$
+
+- $Q$ Conjunto finito de estados.
+- $\Sigma$ Alfabeto de entrada.
+- $\Gamma$ Alfabeto de la pila.
+- $\delta$ Función de transición.
+- $q_0$ Estado inicial.
+- $F$ Conjunto de estados de aceptación.
+
+---
+
+##             ALFABETO DE PILA {.scrollable}
+
+### Stack Alphabet
+
+- Los símbolos almacenados pertenecen a $\Gamma$.
+- Generalmente: $\Gamma \supseteq \Sigma$
+
+- Puede contener símbolos especiales.
+
+- Ejemplo: $\Gamma=\{a,Z_0\}$
+
+    - $a$ representa datos almacenados.
+    - $Z_0$ marca el fondo de la pila.
+
+---
+
+##             FUNCIÓN DE TRANSICIÓN {.scrollable}
+
+
+$$
+\delta:
+Q\times \Sigma_{\epsilon}\times \Gamma_{\epsilon}
+\rightarrow
+\mathcal{P}(Q\times \Gamma_{\epsilon})
+$$
+
+- Se observa el estado actual.
+- Se lee un símbolo de entrada o ε.
+- Se inspecciona el tope de la pila.
+- Se decide:
+    - Nuevo estado.
+    - Nuevo contenido del tope.
+
+---
+
+##             OPERACIONES SOBRE LA PILA {.scrollable}
+
+### Push
+
+Inserta un símbolo: $A \rightarrow BA$
+
+Ejemplo:
+
+```text
+Antes:
+Top -> Z
+
+Después:
+Top -> A
+        Z
+```
+
+---
+
+##             OPERACIONES SOBRE LA PILA {.scrollable}
+
+### Pop
+
+Elimina el símbolo superior.
+
+```text
+Antes:
+
+Top -> A
+        Z
+
+Después:
+
+Top -> Z
+```
+
+- Permite comparar símbolos previamente almacenados.
+- Fundamental para reconocer estructuras balanceadas.
+
+---
+
+##             IDEA DE FUNCIONAMIENTO {.scrollable}
+
+### Lenguaje
+
+$$
+L=\{a^n b^n \mid n\ge0\}
+$$
+
+Estrategia:
+
+- Leer símbolos $a$.
+- Apilar un símbolo por cada $a$.
+- Leer símbolos $b$.
+- Desapilar un símbolo por cada $b$.
+- Aceptar si:
+    - La entrada termina.
+    - La pila queda vacía.
+
+---
+
+##             PDA PARA aⁿbⁿ {.scrollable}
+
+### Descripción
+
+Estado $q_0$
+
+- Mientras lea $a$
+    - Apilar $A$
+
+Estado $q_1$
+
+- Por cada $b$
+    - Desapilar $A$
+
+Estado final
+
+- Pila vacía
+- Entrada consumida
+
+---
+
+##             EJECUCIÓN PASO A PASO {.scrollable}
+
+### Cadena: aaabbb
+
+Entrada:
+
+```text
+aaabbb
+```
+
+Pila:
+
+```text
+Z
+AZ
+AAZ
+AAAZ
+```
+
+Al comenzar los b:
+
+```text
+AAZ
+AZ
+Z
+```
+
+Aceptación:
+
+```text
+Entrada vacía
+Pila vacía
+```
+
+---
+
+##             TRANSICIONES ε {.scrollable}
+
+### Epsilon-Transitions
+
+- El PDA puede cambiar de estado sin consumir entrada.
+- Son equivalentes a las ε-transiciones de un NFA.
+
+Ejemplo: $\delta(q,\epsilon,A)=\{(p,\epsilon)\}$
+
+- Cambia de estado.
+- Elimina el símbolo A.
+- No consume entrada.
+
+---
+
+##             ACEPTACIÓN POR ESTADO FINAL {.scrollable}
+
+### Método 1
+
+Una cadena es aceptada si:
+
+- Toda la entrada es consumida.
+- El PDA termina en un estado de aceptación.
+
+$$
+q \in F
+$$
+
+Este método es similar al utilizado en DFA y NFA.
+
+---
+
+##             ACEPTACIÓN POR PILA VACÍA {.scrollable}
+
+### Método 2
+
+Una cadena es aceptada si:
+
+- Toda la entrada es consumida.
+- La pila queda vacía.
+
+```text
+Top -> ∅
+```
+
+- No es necesario llegar a un estado final.
+- Es ampliamente utilizado en teoría.
+
+---
+
+##             EQUIVALENCIA {.scrollable}
+
+### Teorema Fundamental
+
+Los dos modelos son equivalentes:
+
+- PDA por estado final.
+- PDA por pila vacía.
+
+Ambos reconocen exactamente los mismos lenguajes.
+
+$$
+L_{final}=L_{empty}
+$$
+
+---
+
+##             PDA Y CFG {.scrollable}
+
+### Relación Fundamental
+
+Sipser demuestra:
+
+- Toda CFG tiene un PDA equivalente.
+- Todo PDA posee una CFG equivalente.
+
+$$
+\text{CFG}
+\equiv
+\text{PDA}
+$$
+
+Por tanto:
+
+- Generación mediante gramáticas.
+- Reconocimiento mediante PDA.
+
+Representan la misma clase de lenguajes.
+
+```{python}
+#| echo: true
+class PushdownAutomaton:
+
+    def __init__(self):
+        self.stack = ['Z']  # símbolo inicial
+
+    def process(self, string):
+
+        state = 'q0'
+
+        for symbol in string:
+
+            # Estado q0: apilar A por cada a
+            if state == 'q0':
+
+                if symbol == 'a':
+                    self.stack.append('A')
+
+                elif symbol == 'b':
+
+                    if len(self.stack) > 1 and self.stack[-1] == 'A':
+                        self.stack.pop()
+                        state = 'q1'
+                    else:
+                        return False
+
+                else:
+                    return False
+
+            # Estado q1: desapilar A por cada b
+            elif state == 'q1':
+
+                if symbol == 'b':
+
+                    if len(self.stack) > 1 and self.stack[-1] == 'A':
+                        self.stack.pop()
+                    else:
+                        return False
+
+                else:
+                    return False
+
+        return state == 'q1' and self.stack == ['Z']
+
+
+# Pruebas
+pda = PushdownAutomaton()
+
+tests = [
+    "",
+    "ab",
+    "aabb",
+    "aaabbb",
+    "aaaabbbb",
+    "aab",
+    "abb",
+    "aaabb"
+]
+
+for w in tests:
+    print(f"{w!r:10} -> {pda.process(w)}")
+    pda = PushdownAutomaton()
+```
+
+```{python}
+#| echo: true
+
+from graphviz import Digraph
+
+pda = Digraph("PDA")
+pda.attr(rankdir="LR")
+
+pda.node("q0", shape="circle")
+pda.node("q1", shape="circle")
+pda.node("qf", shape="doublecircle")
+
+pda.edge("", "q0")
+
+pda.edge(
+    "q0",
+    "q0",
+    label="a, Z→AZ\n a, A→AA"
+)
+
+pda.edge(
+    "q0",
+    "q1",
+    label="b, A→ε"
+)
+
+pda.edge(
+    "q1",
+    "q1",
+    label="b, A→ε"
+)
+
+pda.edge(
+    "q1",
+    "qf",
+    label="ε, Z→Z"
+)
+
+pda.render("pda_an_bn", format="png", view=True)
+```
 
 
 ## ¿Qué aprendimos hoy? {.center}

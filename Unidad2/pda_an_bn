@@ -1,0 +1,12 @@
+digraph PDA {
+	rankdir=LR
+	q0 [shape=circle]
+	q1 [shape=circle]
+	qf [shape=doublecircle]
+	"" -> q0
+	q0 -> q0 [label="a, Z→AZ
+ a, A→AA"]
+	q0 -> q1 [label="b, A→ε"]
+	q1 -> q1 [label="b, A→ε"]
+	q1 -> qf [label="ε, Z→Z"]
+}
